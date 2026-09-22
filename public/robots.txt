@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://CHANGE-ME.vercel.app/sitemap.xml
+Sitemap: https://fitk-bina.vercel.app/sitemap.xml

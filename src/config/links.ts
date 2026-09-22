@@ -7,11 +7,8 @@
  * הכתובת הציבורית של הדף.
  * שימו לב: היא מופיעה גם ב-index.html (canonical/og), public/robots.txt
  * ו-public/sitemap.xml — החלפת דומיין דורשת עדכון בכל ארבעת המקומות.
- *
- * TODO: כתובת זמנית — להחליף בכתובת האמיתית אחרי ההעלאה ל-Vercel
- * (חיפוש CHANGE-ME בפרויקט מוצא את כל ארבעת המקומות).
  */
-export const SITE_URL = 'https://CHANGE-ME.vercel.app/'
+export const SITE_URL = 'https://fitk-bina.vercel.app/'
 
 /** שיתוף הדף בוואטסאפ — ערוץ ההפצה העיקרי, ולכן בלחיצה אחת ולא בהעתקת URL. */
 export const WHATSAPP_SHARE_URL = `https://wa.me/?text=${encodeURIComponent(
