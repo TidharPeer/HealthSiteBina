@@ -1,0 +1,128 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Design tokens — taken verbatim from the "מפרט עיצוב" tab of the spec doc.
+   Terracotta is reserved for CTAs and holiday accents: it is what keeps the
+   page from reading as "just another green wellness page".
+--------------------------------------------------------------------------- */
+@theme {
+  --color-cream: #f8f6f0;
+  --color-sage: #e8efe8;
+  --color-brand: #315c4c;
+  --color-olive: #78916f;
+  /* טרקוטה דקורטיבית — הילות, גבולות, טבעת מיקוד. נופלת ב-AA ככל שהיא טקסט. */
+  --color-terracotta: #c9795b;
+  /* אותה משפחת גוון, כהה מספיק לטקסט וכמילוי כפתור: ≥4.8:1 מול cream/sage/לבן. */
+  --color-terracotta-ink: #9e5236;
+  --color-ink: #26332e;
+  /* הוכהה מ-#66716c, שנפל ב-AA על רקע sage — והוא נושא טקסט גוף בכל הסקשנים הירוקים. */
+  --color-muted: #5c6763;
+
+  --font-sans: 'Heebo', ui-sans-serif, system-ui, 'Segoe UI', Arial, sans-serif;
+
+  /* One rule covers both the mobile and desktop scales from the spec. */
+  --text-h1: clamp(2.125rem, 1.2rem + 3.2vw, 3.5rem);
+  --text-h1--line-height: 1.15;
+  --text-h1--font-weight: 800;
+
+  --text-h2: clamp(1.75rem, 1.3rem + 1.8vw, 2.5rem);
+  --text-h2--line-height: 1.2;
+  --text-h2--font-weight: 700;
+
+  --text-h3: clamp(1.375rem, 1.2rem + 0.7vw, 1.75rem);
+  --text-h3--line-height: 1.3;
+  --text-h3--font-weight: 700;
+
+  --text-body: clamp(1.0625rem, 1rem + 0.25vw, 1.125rem);
+  --text-body--line-height: 1.75;
+
+  --text-small: 1rem;
+  --text-small--line-height: 1.7;
+
+  --text-btn: clamp(1.0625rem, 1rem + 0.2vw, 1.125rem);
+  --text-btn--line-height: 1.4;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* room for the sticky mobile CTA bar when jumping to an anchor */
+    scroll-padding-top: 1rem;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--color-brand);
+    color: #fff;
+  }
+
+  /* Tailwind v4 מאפס את הסמן על כפתורים לברירת המחדל של הדפדפן — מחזירים יד מצביעה */
+  button:not(:disabled),
+  [role='button']:not(:disabled),
+  summary,
+  label[for],
+  a[href] {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  /*
+    טבעת מיקוד דו-צבעית. מתאר בטרקוטה כהה נראה היטב על cream/sage/לבן, אבל נבלע
+    ברקע הכהה של FinalCta — ולכן מתחתיו טבעת לבנה. אחד מהשניים תמיד בניגוד מספיק,
+    על כל אחד מהרקעים בדף.
+  */
+  :focus-visible {
+    outline: 3px solid var(--color-terracotta-ink);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px rgb(255 255 255 / 0.9);
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Scroll reveal — driven by the useInView hook. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.6s ease-out,
+      transform 0.6s ease-out;
+  }
+
+  .reveal-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

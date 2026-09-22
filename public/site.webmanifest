@@ -1,0 +1,19 @@
+{
+  "name": "מדריך איזון תזונתי לחגים",
+  "short_name": "איזון בחגים",
+  "description": "4 עקרונות פשוטים לחגים מאוזנים יותר — וכלים אינטראקטיביים שיעזרו לכם ליישם אותם.",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f6f0",
+  "theme_color": "#315c4c",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
