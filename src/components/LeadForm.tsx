@@ -18,6 +18,8 @@ export function LeadForm() {
   const [note, setNote] = useState('')
   const [errors, setErrors] = useState<LeadErrors>({})
   const [sent, setSent] = useState<LeadSubmission | null>(null)
+  // null = ממתינים לאישור, true = הליד נקלט במייל, false = הקליטה נכשלה/כבויה
+  const [delivered, setDelivered] = useState<boolean | null>(null)
 
   const successRef = useRef<HTMLDivElement>(null)
 
@@ -35,11 +37,14 @@ export function LeadForm() {
 
     if (Object.keys(found).length > 0) {
       setSent(null)
+      setDelivered(null)
       return
     }
 
     const submission = submitLead(lead)
     setSent(submission)
+    setDelivered(null)
+    submission.delivered.then(setDelivered)
 
     track('lead_submit', { has_note: Boolean(note.trim()) })
     // נמדד בנפרד: אם שיעור החסימות גבוה, ההעברה לוואטסאפ היא צוואר בקבוק אמיתי
@@ -151,6 +156,9 @@ export function LeadForm() {
             tabIndex={-1}
             className="mt-4 rounded-xl bg-sage p-4 text-center text-small font-medium text-brand"
           >
+            {delivered === true && (
+              <p className="mb-1 font-bold">{program.form.storedNotice}</p>
+            )}
             <p>
               {sent.opened
                 ? program.form.success

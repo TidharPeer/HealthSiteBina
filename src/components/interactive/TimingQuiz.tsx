@@ -12,9 +12,8 @@ export function TimingQuiz() {
 
   return (
     <div className="rounded-2xl bg-white p-6 shadow-[0_2px_16px_rgba(38,51,46,0.06)] sm:p-8">
-      <p className="text-small font-bold text-terracotta-ink">{timingQuiz.intro}</p>
-      <h4 className="mt-2 text-h3">{timingQuiz.title}</h4>
-      <p id="timing-question" className="mt-2 text-ink">
+      <h4 className="text-h3">{timingQuiz.title}</h4>
+      <p id="timing-question" className="mt-2 font-bold text-terracotta-ink">
         {timingQuiz.question}
       </p>
 

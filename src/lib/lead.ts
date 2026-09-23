@@ -52,11 +52,12 @@ export function buildLeadMessage(lead: Lead): string {
 }
 
 /**
- * שמירת הליד ב-Web3Forms (מייל לבעלת המפתח), כדי שגם מי שלא ילחץ "שלח" בוואטסאפ
- * לא ייעלם. הבקשה נשלחת ולא ממתינים לה — ראו הערה ב-submitLead.
+ * שמירת הליד ב-Web3Forms (מייל למשווקת), כדי שגם מי שלא ילחץ "שלח" בוואטסאפ
+ * לא ייעלם. מחזירה Promise שמסמן אם הליד באמת נקלט — הטופס משתמש בזה כדי
+ * להציג "הפרטים הגיעו" רק אחרי מסירה אמיתית, ולא לטעון קבלה שלא קרתה.
  */
-function storeLead(lead: Lead): void {
-  if (!isLeadStorageEnabled()) return
+function storeLead(lead: Lead): Promise<boolean> {
+  if (!isLeadStorageEnabled()) return Promise.resolve(false)
 
   const payload = {
     access_key: WEB3FORMS_ACCESS_KEY,
@@ -68,15 +69,18 @@ function storeLead(lead: Lead): void {
     botcheck: '',
   }
 
-  fetch(WEB3FORMS_ENDPOINT, {
+  return fetch(WEB3FORMS_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
     // הבקשה מושלמת גם אם הלשונית מנווטת מיד אחרי כן
     keepalive: true,
-  }).catch(() => {
-    // כשל בשמירה לא אמור לפגוע במשתמש — הוא ממשיך לוואטסאפ כרגיל
   })
+    .then((response) => response.ok)
+    .catch(() => {
+      // כשל בשמירה לא אמור לפגוע במשתמש — הוא ממשיך לוואטסאפ כרגיל
+      return false
+    })
 }
 
 /** קישור הוואטסאפ עם ההודעה המוכנה — גם לפתיחה אוטומטית וגם לקישור הגיבוי. */
@@ -89,25 +93,27 @@ export type LeadSubmission = {
   whatsappUrl: string
   /** false כשחוסם פופ-אפים מנע את פתיחת החלון — אז הקישור הגלוי הוא הדרך היחידה. */
   opened: boolean
+  /** true רק אם הליד באמת נקלט אצל המשווקת (מייל). */
+  delivered: Promise<boolean>
 }
 
 /**
  * שליחת ליד: שומרים אותו, ומיד פותחים וואטסאפ עם הודעה מוכנה.
  *
  * חשוב: אין כאן await לפני window.open. ברגע שהפתיחה יוצאת מהקשר הלחיצה של
- * המשתמש, חוסמי פופ-אפים חוסמים אותה — ולכן השמירה נשלחת עם keepalive
- * ולא ממתינים לתשובתה.
+ * המשתמש, חוסמי פופ-אפים חוסמים אותה — ולכן ה-window.open נשאר סינכרוני,
+ * ואישור הקליטה מגיע מאוחר יותר דרך ה-Promise שב-delivered.
  *
  * הפתיחה היא בלי 'noopener': לפי המפרט window.open עם noopener מחזיר תמיד null,
  * ואז אי אפשר להבחין בין הצלחה לחסימה. במקום זה מנתקים את opener ידנית — אותה
  * הגנה מפני reverse tabnabbing, אבל עם ערך החזרה שאפשר לבדוק.
  */
 export function submitLead(lead: Lead): LeadSubmission {
-  storeLead(lead)
+  const delivered = storeLead(lead)
 
   const whatsappUrl = buildWhatsappUrl(lead)
   const opened = window.open(whatsappUrl, '_blank')
   if (opened) opened.opener = null
 
-  return { whatsappUrl, opened: opened !== null }
+  return { whatsappUrl, opened: opened !== null, delivered }
 }
