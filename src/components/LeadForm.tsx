@@ -156,8 +156,11 @@ export function LeadForm() {
             tabIndex={-1}
             className="mt-4 rounded-xl bg-sage p-4 text-center text-small font-medium text-brand"
           >
+            {/* "מעולה!" ושורת ה-✓ מופיעים רק אחרי אישור אמיתי מה-API */}
             {delivered === true && (
-              <p className="mb-1 font-bold">{program.form.storedNotice}</p>
+              <p className="mb-1 font-bold">
+                {program.form.successConfirmed} {program.form.storedNotice}
+              </p>
             )}
             <p>
               {sent.opened

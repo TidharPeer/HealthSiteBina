@@ -60,5 +60,33 @@ export function resolvePerson(): Person {
   return BINA
 }
 
+const SOURCE_KEY = 'fitk_src'
+const SOURCE_MAX_LENGTH = 40
+
+/**
+ * תיוג מקור: הערך הגולמי של ?ref= (גם אם אין לו רשומה ב-PEOPLE).
+ * הליד עדיין מגיע לבעלת הרשומה (כרגע בינה) — זה רק סימון "הגיע דרך".
+ * נשמר ב-sessionStorage כמו הזהות, כדי שלא ייעלם בגלישה בתוך הדף.
+ * מחזיר null כשאין ref — ואז הליד מסומן "ישיר".
+ */
+export function resolveSource(): string | null {
+  try {
+    const raw = new URLSearchParams(window.location.search).get('ref')
+    const clean = raw?.trim().slice(0, SOURCE_MAX_LENGTH)
+    if (clean) {
+      window.sessionStorage.setItem(SOURCE_KEY, clean)
+      return clean
+    }
+    const saved = window.sessionStorage.getItem(SOURCE_KEY)
+    if (saved) return saved
+  } catch {
+    // סביבה ללא window/sessionStorage — אין מקור
+  }
+  return null
+}
+
+/** מקור ההגעה של המבקר הנוכחי (ערך ?ref=), או null לכניסה ישירה. */
+export const source = resolveSource()
+
 /** הרשומה הפעילה של הדף הנוכחי — כל הקישורים והטופס נגזרים ממנה. */
 export const person = resolvePerson()

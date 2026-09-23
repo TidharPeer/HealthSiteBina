@@ -42,7 +42,7 @@ export const principles = {
       { emoji: '🐕', label: 'הליכה עם הכלב' },
       { emoji: '🧹', label: 'נקו את הבית' },
       { emoji: '🚗', label: 'חנו 2 רחובות מהעבודה' },
-      { emoji: '💃', label: 'תרקדו' },
+      { emoji: '💃', label: 'רקדו' },
     ],
     tabata: {
       title: 'אימון טאבטה',

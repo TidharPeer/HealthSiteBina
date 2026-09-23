@@ -4,6 +4,7 @@ import {
   isLeadStorageEnabled,
 } from '../config/forms'
 import { WHATSAPP_LEAD_NUMBER } from '../config/links'
+import { source } from '../config/people'
 import { PROGRAM_NAME } from '../content/program'
 
 export type Lead = {
@@ -66,6 +67,8 @@ function storeLead(lead: Lead): Promise<boolean> {
     שם: lead.name.trim(),
     טלפון: lead.phone.trim(),
     הערה: lead.note?.trim() || '—',
+    // שדה נסתר: מאיזה לינק הגיע הליד (?ref=), או "ישיר"
+    'הגיע דרך': source ?? 'ישיר',
     botcheck: '',
   }
 
@@ -76,7 +79,14 @@ function storeLead(lead: Lead): Promise<boolean> {
     // הבקשה מושלמת גם אם הלשונית מנווטת מיד אחרי כן
     keepalive: true,
   })
-    .then((response) => response.ok)
+    // "נקלט" רק כשה-API מחזיר success: true בגוף התשובה — לא מספיק סטטוס 200
+    .then(async (response) => {
+      if (!response.ok) return false
+      const data = (await response.json().catch(() => null)) as {
+        success?: boolean
+      } | null
+      return data?.success === true
+    })
     .catch(() => {
       // כשל בשמירה לא אמור לפגוע במשתמש — הוא ממשיך לוואטסאפ כרגיל
       return false
